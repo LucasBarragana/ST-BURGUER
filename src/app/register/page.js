@@ -69,7 +69,16 @@ export default function RegisterPage() {
           Existing account?{' '}
           <Link className="underline" href={'/login'}>Login here &raquo;</Link>
         </div>
+        <div class="flex flex-col items-center justify-center bg-gray-200 p-4 max-w-[50rem] rounded-lg mt-5">
+          <h2 class="mb-4 text-blue-900 font-semibold ">Para fazer login como administrador faça login com a seguinte conta do google:</h2>
+          <ul className="bg-gray-100 p-4 rounded-lg text-blue-900">
+              <li><span className="font-semibold text-blue-900 mr-4">Email:</span>stfomeadm@gmail.com</li>
+              <li><span className="font-semibold text-blue-900 mr-4">Senha:</span>stfomeadm</li>
+          </ul>
+      </div>
       </form>
+
+      
     </section>
   );
 }
