@@ -1,5 +1,7 @@
 'use client';
 import Left from "@/components/icons/Left";
+import Right from "@/components/icons/Right";
+import EditableImage from "@/components/layout/EditableImage";
 import MenuItemForm from "@/components/layout/MenuItemForm";
 import UserTabs from "@/components/layout/UserTabs";
 import {useProfile} from "@/components/UseProfile";
@@ -28,9 +30,9 @@ export default function NewMenuItemPage() {
     });
 
     await toast.promise(savingPromise, {
-      loading: 'Salvando este, delicioso, pedido',
-      success: 'Salvo',
-      error: 'Erro',
+      loading: 'Saving this tasty item',
+      success: 'Saved',
+      error: 'Error',
     });
 
     setRedirectToItems(true);
@@ -41,11 +43,11 @@ export default function NewMenuItemPage() {
   }
 
   if (loading) {
-    return 'Carregando itens...';
+    return 'Loading user info...';
   }
 
   if (!data.admin) {
-    return 'Não é admin.';
+    return 'Not an admin.';
   }
 
   return (
@@ -54,7 +56,7 @@ export default function NewMenuItemPage() {
       <div className="max-w-2xl mx-auto mt-8">
         <Link href={'/menu-items'} className="button">
           <Left />
-          <span>Mostrar todos itens</span>
+          <span>Show all menu items</span>
         </Link>
       </div>
       <MenuItemForm menuItem={null} onSubmit={handleFormSubmit} />

@@ -11,8 +11,8 @@ export default function LoginPage() {
   async function handleFormSubmit(ev) {
     ev.preventDefault();
     setLoginInProgress(true);
-    
-    await signIn('credentials', {email, password})
+
+    await signIn('credentials', {email, password, callbackUrl: '/'});
 
     setLoginInProgress(false);
   }
@@ -28,24 +28,16 @@ export default function LoginPage() {
         <input type="password" name="password" placeholder="password" value={password}
                disabled={loginInProgress}
                onChange={ev => setPassword(ev.target.value)}/>
-        <button disabled type="submit">Manutenção</button>
+        <button disabled={loginInProgress} type="submit">Login</button>
         <div className="my-4 text-center text-gray-500">
-          ou login com o google
+          or login with provider
         </div>
         <button type="button" onClick={() => signIn('google', {callbackUrl: '/'})}
                 className="flex gap-4 justify-center">
           <Image src={'/google.png'} alt={''} width={24} height={24} />
-          Login com google
+          Login with google
         </button>
-        <div class="flex flex-col items-center justify-center bg-gray-200 p-4 max-w-[50rem] rounded-lg mt-5">
-          <h2 class="mb-4 text-blue-900 font-semibold ">Para fazer login como administrador faça login com a seguinte conta do google:</h2>
-          <ul className="bg-gray-100 p-4 rounded-lg text-blue-900">
-              <li><span className="font-semibold text-blue-900 mr-4">Email:</span>stfomeadm@gmail.com</li>
-              <li><span className="font-semibold text-blue-900 mr-4">Senha:</span>stfomeadm</li>
-          </ul>
-      </div>
       </form>
-      
     </section>
   );
 }

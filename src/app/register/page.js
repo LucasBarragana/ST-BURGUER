@@ -35,15 +35,15 @@ export default function RegisterPage() {
       </h1>
       {userCreated && (
         <div className="my-4 text-center">
-          Usuário criado<br />
-          Agora você pode{' '}
+          Usuário Criado.<br />
+          Agora você pode fazer login{' '}
           <Link className="underline" href={'/login'}>Login &raquo;</Link>
         </div>
       )}
       {error && (
         <div className="my-4 text-center">
-          Um erro ocorreu<br />
-          Tente outro email ou verifique sua senha
+          Um erro ocorreu.<br />
+          Por favor tente novamente mais tarde
         </div>
       )}
       <form className="block max-w-xs mx-auto" onSubmit={handleFormSubmit}>
@@ -53,11 +53,11 @@ export default function RegisterPage() {
         <input type="password" placeholder="password" value={password}
                disabled={creatingUser}
                 onChange={ev => setPassword(ev.target.value)}/>
-        <button type="submit" disabled>
-          Manutenção
+        <button type="submit" disabled={creatingUser}>
+          Registrar-se
         </button>
         <div className="my-4 text-center text-gray-500">
-          ou faça login com o google
+          or login with provider
         </div>
         <button
           onClick={() => signIn('google', {callbackUrl:'/'})}
@@ -66,19 +66,10 @@ export default function RegisterPage() {
           Login com google
         </button>
         <div className="text-center my-4 text-gray-500 border-t pt-4">
-          Existing account?{' '}
+          Já tem conta?{' '}
           <Link className="underline" href={'/login'}>Login here &raquo;</Link>
         </div>
-        <div class="flex flex-col items-center justify-center bg-gray-200 p-4 max-w-[50rem] rounded-lg mt-5">
-          <h2 class="mb-4 text-blue-900 font-semibold ">Para fazer login como administrador faça login com a seguinte conta do google:</h2>
-          <ul className="bg-gray-100 p-4 rounded-lg text-blue-900">
-              <li><span className="font-semibold text-blue-900 mr-4">Email:</span>stfomeadm@gmail.com</li>
-              <li><span className="font-semibold text-blue-900 mr-4">Senha:</span>stfomeadm</li>
-          </ul>
-      </div>
       </form>
-
-      
     </section>
   );
 }

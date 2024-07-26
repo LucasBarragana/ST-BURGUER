@@ -5,8 +5,6 @@ import SectionHeaders from "@/components/layout/SectionHeaders";
 import CartProduct from "@/components/menu/CartProduct";
 import {useParams} from "next/navigation";
 import {useContext, useEffect, useState} from "react";
-import Link from "next/link";
-import Left from "@/components/icons/Left";
 
 export default function OrderPage() {
   const {clearCart} = useContext(CartContext);
@@ -28,7 +26,7 @@ export default function OrderPage() {
         });
       })
     }
-  }, [clearCart, id]);
+  }, []);
 
   let subtotal = 0;
   if (order?.cartProducts) {
@@ -39,15 +37,11 @@ export default function OrderPage() {
 
   return (
     <section className="max-w-2xl mx-auto mt-8">
-      <div className="flex bg-orange-700 text-white py-2 px-4 hover:bg-orange-600 w-28 rounded-full">
-        <Left />
-        <Link className=" font-semibold ml-2" href={'/orders'}>Voltar</Link>
-      </div>
       <div className="text-center">
         <SectionHeaders mainHeader="Seu pedido" />
         <div className="mt-4 mb-8">
-          <p>Muito obrigado pelo seu pedido.</p>
-          <p>Nós iremos lhe avisar quando seu pedido sair pra entrega.</p>
+          <p>Obrigado por seu pedido.</p>
+          <p>Iremos entrar em contato quando seu pedido for sair para entrega.</p>
         </div>
       </div>
       {loadingOrder && (

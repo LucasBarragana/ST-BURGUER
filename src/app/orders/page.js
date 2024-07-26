@@ -1,4 +1,5 @@
 'use client';
+import SectionHeaders from "@/components/layout/SectionHeaders";
 import UserTabs from "@/components/layout/UserTabs";
 import {useProfile} from "@/components/UseProfile";
 import {dbTimeForHuman} from "@/libs/datetime";
@@ -8,7 +9,7 @@ import {useEffect, useState} from "react";
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const {data:profile} = useProfile();
+  const {loading, data:profile} = useProfile();
 
   useEffect(() => {
     fetchOrders();
@@ -41,7 +42,7 @@ export default function OrdersPage() {
                   (order.paid ? 'bg-green-500' : 'bg-red-400')
                   + ' p-2 rounded-md text-white w-24 text-center'
                 }>
-                  {order.paid ? 'Pago' : 'Não pago'}
+                  {order.paid ? 'Paid' : 'Not paid'}
                 </div>
               </div>
               <div className="grow">

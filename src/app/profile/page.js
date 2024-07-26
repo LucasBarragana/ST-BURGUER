@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 export default function ProfilePage() {
   const session = useSession();
+
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [profileFetched, setProfileFetched] = useState(false);
@@ -41,8 +42,8 @@ export default function ProfilePage() {
     });
 
     await toast.promise(savingPromise, {
-      loading: 'Saving...',
-      success: 'Profile saved!',
+      loading: 'Salvando...',
+      success: 'Profile salvo!',
       error: 'Error',
     });
 

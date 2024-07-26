@@ -20,11 +20,11 @@ export default function MenuItemsPage() {
   }, []);
 
   if (loading) {
-    return 'Carregando itens...';
+    return 'Loading user info...';
   }
 
   if (!data.admin) {
-    return 'Não é admin.';
+    return 'Not an admin.';
   }
 
   return (
@@ -34,12 +34,12 @@ export default function MenuItemsPage() {
         <Link
           className="button flex"
           href={'/menu-items/new'}>
-          <span>Criar novo item</span>
+          <span>Crete new menu item</span>
           <Right />
         </Link>
       </div>
       <div>
-        <h2 className="text-sm text-gray-500 mt-8">Editar item:</h2>
+        <h2 className="text-sm text-gray-500 mt-8">Edit menu item:</h2>
         <div className="grid grid-cols-3 gap-2">
           {menuItems?.length > 0 && menuItems.map(item => (
             <Link

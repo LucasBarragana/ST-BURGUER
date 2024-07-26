@@ -17,7 +17,7 @@ export default function EditUserPage() {
         setUser(user);
       });
     })
-  }, [id]);
+  }, []);
 
   async function handleSaveButtonClick(ev, data) {
     ev.preventDefault();
@@ -34,18 +34,18 @@ export default function EditUserPage() {
     });
 
     await toast.promise(promise, {
-      loading: 'Salavdno usuário...',
+      loading: 'Salvando usuário...',
       success: 'Usuário salvo',
-      error: 'Um erro ocorreu durante o processo',
+      error: 'Um erro ocorreu enquanto tentava criar o usuário',
     });
   }
 
   if (loading) {
-    return 'Carregando informações do perfil...';
+    return 'Loading perfil do usuário...';
   }
 
   if (!data.admin) {
-    return 'Não é um admin';
+    return 'Not an admin';
   }
 
   return (

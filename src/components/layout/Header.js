@@ -1,5 +1,5 @@
 'use client';
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { CartContext } from "@/components/AppContext";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -37,14 +37,33 @@ function AuthLinks({ status, userName }) {
 export default function Header() {
   const session = useSession();
   const status = session?.status;
-  console.log(status)
+  console.log(status);
   const userData = session.data?.user;
   let userName = userData?.name || userData?.email;
   const { cartProducts } = useContext(CartContext);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  async function fetchCategories() {
+    const res = await fetch('/api/categories');
+    const categories = await res.json();
+    setCategories(categories);
+  }
+
   if (userName && userName.includes(" ")) {
     userName = userName.split(" ")[0];
   }
+
+  function handleCategoryClick(category) {
+    setSelectedCategory(category);
+  }
+
   return (
     <header>
       <div className="flex items-center md:hidden justify-between">
@@ -68,7 +87,29 @@ export default function Header() {
       {mobileNavOpen && (
         <div onClick={() => setMobileNavOpen(false)} className="md:hidden p-4 bg-gray-200 rounded-lg mt-2 flex flex-col gap-2 text-center">
           <Link href={"/"} className="hover:text-gray-800 ">Home</Link>
-          <Link href={"/menu"} className="hover:text-gray-800 ">Menu</Link>
+          <div className="relative" onMouseEnter={() => setDropdownOpen(true)} onMouseLeave={() => setDropdownOpen(false)}>
+            <button className="hover:text-gray-800">Menu</button>
+            {dropdownOpen && (
+              <div className="absolute top-full left-0 bg-white shadow-lg rounded-lg mt-2 p-4">
+                {categories.map(category => (
+                  <div key={category._id}>
+                    <button className="block px-4 py-2 hover:bg-gray-200" onClick={() => handleCategoryClick(category)}>
+                      {category.name}
+                    </button>
+                    {selectedCategory?._id === category._id && (
+                      <div className="pl-4">
+                        {category.subcategories.map(subcategory => (
+                          <Link key={subcategory._id} href={`/${category.name.toLowerCase()}/${subcategory.name.toLowerCase()}`} className="block px-4 py-2 hover:bg-gray-200">
+                            {subcategory.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <Link href={"/#about"} className="hover:text-gray-800 ">Sobre</Link>
           <Link href={"/#contact"} className="hover:text-gray-800 ">Contato</Link>
           <AuthLinks status={status} userName={userName} />
@@ -80,11 +121,33 @@ export default function Header() {
             ST FOME
           </Link>
           <Link href={"/"} className="hover:text-gray-800 ">Home</Link>
-          <Link href={"/menu"} className="hover:text-gray-800 ">Menu</Link>
+          <div className="relative" onMouseEnter={() => setDropdownOpen(true)} onMouseLeave={() => setDropdownOpen(false)}>
+            <button className="hover:text-gray-800">Menu</button>
+            {dropdownOpen && (
+              <div className="absolute top-full left-0 bg-white shadow-lg rounded-lg p-4">
+                {categories.map(category => (
+                  <div  key={category._id}>
+                    <button className="block px-4 py-2 mt-2 hover:bg-gray-200" onClick={() => handleCategoryClick(category)}>
+                      {category.name}
+                    </button>
+                    {selectedCategory?._id === category._id && (
+                      <div className="pl-4">
+                        {category.subcategories.map(subcategory => (
+                          <Link key={subcategory._id} href={`/${category.name.toLowerCase()}/${subcategory.name.toLowerCase()}`} className="block px-4 py-2 hover:bg-gray-200">
+                            {subcategory.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <Link href={"/#about"} className="hover:text-gray-800 ">Sobre</Link>
           <Link href={"/#contact"} className="hover:text-gray-800 ">Contato</Link>
         </nav>
-        <nav className="flex items-center gap-4 text-gray-500 font-semibold">
+        <div className="flex items-center gap-8">
           <AuthLinks status={status} userName={userName} />
           <Link href={"/cart"} className="relative">
             <ShoppingCart />
@@ -94,7 +157,7 @@ export default function Header() {
               </span>
             )}
           </Link>
-        </nav>
+        </div>
       </div>
     </header>
   );

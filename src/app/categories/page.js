@@ -1,143 +1,139 @@
+// components/CategoriesPage.js
 'use client';
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import DeleteButton from "@/components/DeleteButton";
 import UserTabs from "@/components/layout/UserTabs";
-import {useEffect, useState} from "react";
-import {useProfile} from "@/components/UseProfile";
-import toast from "react-hot-toast";
+import SubcategoryManager from "@/components/layout/SubcategoryManager";
+import { useProfile } from "@/components/UseProfile";
 
 export default function CategoriesPage() {
-
   const [categoryName, setCategoryName] = useState('');
   const [categories, setCategories] = useState([]);
-  const {loading:profileLoading, data:profileData} = useProfile();
+  const { loading: profileLoading, data: profileData } = useProfile();
   const [editedCategory, setEditedCategory] = useState(null);
 
   useEffect(() => {
-    fetchCategories();
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(categories => setCategories(categories));
   }, []);
-
-  function fetchCategories() {
-    fetch('/api/categories').then(res => {
-      res.json().then(categories => {
-        setCategories(categories);
-      });
-    });
-  }
 
   async function handleCategorySubmit(ev) {
     ev.preventDefault();
-    const creationPromise = new Promise(async (resolve, reject) => {
-      const data = {name:categoryName};
-      if (editedCategory) {
-        data._id = editedCategory._id;
-      }
-      const response = await fetch('/api/categories', {
-        method: editedCategory ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+    const data = { name: categoryName };
+    if (editedCategory) {
+      data._id = editedCategory._id;
+    }
+
+    const response = await fetch('/api/categories', {
+      method: editedCategory ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      toast.success(editedCategory ? 'Category updated' : 'Category created');
       setCategoryName('');
-      fetchCategories();
       setEditedCategory(null);
-      if (response.ok)
-        resolve();
-      else
-        reject();
-    });
-    await toast.promise(creationPromise, {
-      loading: editedCategory
-                 ? 'Atualizando categoria...'
-                 : 'Criando sua nova categoria...',
-      success: editedCategory ? 'Categoria criada' : 'Categoria criada',
-      error: 'Erro, desculpe, reporte o erro no contato, por favor...',
-    });
+      fetch('/api/categories')
+        .then(res => res.json())
+        .then(categories => setCategories(categories));
+    } else {
+      toast.error('Error, sorry...');
+    }
   }
 
   async function handleDeleteClick(_id) {
-    const promise = new Promise(async (resolve, reject) => {
-      const response = await fetch('/api/categories?_id='+_id, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        resolve();
-      } else {
-        reject();
-      }
+    const response = await fetch(`/api/categories?_id=${_id}`, {
+      method: 'DELETE',
     });
 
-    await toast.promise(promise, {
-      loading: 'Deletando...',
-      success: 'Deletado',
-      error: 'Erro',
-    });
-
-    fetchCategories();
+    if (response.ok) {
+      toast.success('Deleted');
+      fetch('/api/categories')
+        .then(res => res.json())
+        .then(categories => setCategories(categories));
+    } else {
+      toast.error('Error');
+    }
   }
 
   if (profileLoading) {
-    return 'Carregando categorias...';
+    return 'Loading user info...';
   }
 
-  if (!profileData.admin) {
-    return 'Não é um admin';
+  if (!profileData?.admin) {
+    return 'Not an admin';
   }
 
   return (
-    <section className="mt-8 max-w-2xl mx-auto">
+    <section className="mt-8 max-w-5xl mx-auto">
       <UserTabs isAdmin={true} />
-      <form className="mt-8" onSubmit={handleCategorySubmit}>
-        <div className="flex gap-2 items-end">
-          <div className="grow">
-            <label>
-              {editedCategory ? 'Atualizar categoria' : 'Nome de uma nova categoria'}
-              {editedCategory && (
-                <>: <b>{editedCategory.name}</b></>
+      <div className="flex justify-between gap-10">
+        <div className="w-1/2">
+          <form className="mt-8" onSubmit={handleCategorySubmit}>
+            <div className="flex gap-2 items-end">
+              <div className="grow">
+                <label>
+                  {editedCategory ? 'Update category' : 'New category name'}
+                  {editedCategory && (
+                    <>: <b>{editedCategory.name}</b></>
+                  )}
+                </label>
+                <input
+                  type="text"
+                  value={categoryName}
+                  onChange={ev => setCategoryName(ev.target.value)}
+                />
+              </div>
+              <div className="pb-2 flex gap-2">
+                <button className="border border-primary" type="submit">
+                  {editedCategory ? 'Update' : 'Create'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditedCategory(null);
+                    setCategoryName('');
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+          <div>
+            <h2 className="mt-8 text-sm text-gray-500">Existing categories</h2>
+            <div className="mt-2">
+              {categories?.length > 0 ? (
+                categories.map(category => (
+                  <div key={category._id} className="border-b border-primary py-2 flex justify-between">
+                    <div className="flex gap-2 items-center">
+                      {category.name}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setEditedCategory(category);
+                          setCategoryName(category.name);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <DeleteButton onClick={() => handleDeleteClick(category._id)} />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No categories found</p>
               )}
-            </label>
-            <input type="text"
-                   value={categoryName}
-                   onChange={ev => setCategoryName(ev.target.value)}
-            />
-          </div>
-          <div className="pb-2 flex gap-2">
-            <button className="border border-primary" type="submit">
-              {editedCategory ? 'Atualizar' : 'Criar'}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEditedCategory(null);
-                setCategoryName('');
-              }}>
-              Cancelar
-            </button>
+            </div>
           </div>
         </div>
-      </form>
-      <div>
-        <h2 className="mt-8 text-sm text-gray-500">Categorias existentes</h2>
-        {categories?.length > 0 && categories.map(c => (
-          <div
-            key={c._id}
-            className="bg-gray-100 rounded-xl p-2 px-4 flex gap-1 mb-1 items-center">
-            <div className="grow">
-              {c.name}
-            </div>
-            <div className="flex gap-1">
-              <button type="button"
-                      onClick={() => {
-                        setEditedCategory(c);
-                        setCategoryName(c.name);
-                      }}
-              >
-                Editar
-              </button>
-              <DeleteButton
-                label="Deletar"
-                onDelete={() => handleDeleteClick(c._id)} />
-            </div>
-          </div>
-        ))}
+        <div className="w-1/2">
+          <SubcategoryManager categories={categories || []} />
+        </div>
       </div>
     </section>
   );

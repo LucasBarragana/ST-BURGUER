@@ -1,6 +1,7 @@
 'use client';
 import DeleteButton from "@/components/DeleteButton";
 import Left from "@/components/icons/Left";
+import EditableImage from "@/components/layout/EditableImage";
 import MenuItemForm from "@/components/layout/MenuItemForm";
 import UserTabs from "@/components/layout/UserTabs";
 import {useProfile} from "@/components/UseProfile";
@@ -24,7 +25,7 @@ export default function EditMenuItemPage() {
         setMenuItem(item);
       });
     })
-  }, [id]);
+  }, []);
 
   async function handleFormSubmit(ev, data) {
     ev.preventDefault();
@@ -42,9 +43,9 @@ export default function EditMenuItemPage() {
     });
 
     await toast.promise(savingPromise, {
-      loading: 'Salvando este, delicioso, item',
-      success: 'Salvo',
-      error: 'Erro',
+      loading: 'Saving this tasty item',
+      success: 'Saved',
+      error: 'Error',
     });
 
     setRedirectToItems(true);
@@ -62,9 +63,9 @@ export default function EditMenuItemPage() {
     });
 
     await toast.promise(promise, {
-      loading: 'Deletando...',
-      success: 'Deletado',
-      error: 'Erro',
+      loading: 'Deleting...',
+      success: 'Deleted',
+      error: 'Error',
     });
 
     setRedirectToItems(true);
@@ -75,11 +76,11 @@ export default function EditMenuItemPage() {
   }
 
   if (loading) {
-    return 'Carrgando itens...';
+    return 'Loading user info...';
   }
 
   if (!data.admin) {
-    return 'Nao é admin.';
+    return 'Not an admin.';
   }
 
   return (
@@ -88,14 +89,14 @@ export default function EditMenuItemPage() {
       <div className="max-w-2xl mx-auto mt-8">
         <Link href={'/menu-items'} className="button">
           <Left />
-          <span>Mostrar todos itens</span>
+          <span>Show all menu items</span>
         </Link>
       </div>
       <MenuItemForm menuItem={menuItem} onSubmit={handleFormSubmit} />
       <div className="max-w-md mx-auto mt-2">
         <div className="max-w-xs ml-auto pl-4">
           <DeleteButton
-            label="Deletar este Menu item"
+            label="Delete this menu item"
             onDelete={handleDeleteClick}
           />
         </div>
